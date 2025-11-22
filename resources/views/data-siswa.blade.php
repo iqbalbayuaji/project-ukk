@@ -101,21 +101,44 @@
 
     {{-- Main Content --}}
     <div class="p-3 sm:p-4 sm:ml-64 pt-20 sm:pt-4 max-w-full overflow-x-hidden">
-        {{-- Header --}}
-        <div class="mb-6 sm:mb-8">
+        {{-- Header Section --}}
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Data Siswa</h1>
-                    <p class="text-gray-600 mt-1 text-sm sm:text-base">Kelola data siswa BBT Academia</p>
+                    <h1 class="text-2xl font-bold text-gray-900 mb-2">Data Siswa</h1>
+                    <p class="text-gray-600">Kelola data siswa yang terdaftar di BBT Academia</p>
                 </div>
-                <button class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white rounded-xl font-semibold transition shadow-sm">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                <button class="px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-lg hover:from-cyan-700 hover:to-blue-700 transition font-semibold shadow-lg shadow-cyan-500/30 flex items-center gap-2 justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
                     Tambah Siswa
                 </button>
             </div>
         </div>
+
+        {{-- Success/Error Notification --}}
+        @if(session('success'))
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded-lg">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p class="text-green-700 font-semibold">{{ session('success') }}</p>
+                </div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-lg">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p class="text-red-700 font-semibold">{{ session('error') }}</p>
+                </div>
+            </div>
+        @endif
 
         {{-- 
             FORM SEARCH & FILTER
@@ -452,25 +475,44 @@
                 </button>
                 <div class="flex gap-3">
                     {{-- Tombol Edit --}}
-                    <button class="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition font-semibold flex items-center gap-2">
+                    <form id="editForm" method="POST" action="" class="hidden">
+                        @csrf
+                        @method('PUT')
+                    </form>
+                    <button 
+                        onclick="toggleEditMode()"
+                        id="editButton"
+                        class="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition font-semibold flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                         </svg>
-                        Edit
+                        <span id="editButtonText">Edit</span>
                     </button>
                     {{-- Tombol Hapus --}}
-                    <button class="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition font-semibold flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                        </svg>
-                        Hapus
-                    </button>
+                    <form id="deleteForm" method="POST" action="" class="inline">
+                        @csrf
+                        @method('DELETE')
+                        <button 
+                            type="button"
+                            onclick="confirmDelete()"
+                            class="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition font-semibold flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                            Hapus
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Dropdown data from backend
+        const classesData = @json($classes);
+        const educationLevelsData = @json($educationLevels);
+        const schoolGradesData = @json($schoolGrades);
+
         // Mobile menu toggle
         const sidebar = document.getElementById('sidebar');
         const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
@@ -494,8 +536,17 @@
         });
 
         // MODAL FUNCTIONS
+        let currentStudentId = null;
+        let isEditMode = false;
+
         function openModal(student) {
             const modal = document.getElementById('studentModal');
+            currentStudentId = student.id;
+            isEditMode = false;
+            
+            // Set form actions
+            document.getElementById('editForm').action = `/data-siswa/${student.id}`;
+            document.getElementById('deleteForm').action = `/data-siswa/${student.id}`;
             
             // Populate modal with student data
             // Header
@@ -503,23 +554,35 @@
             document.getElementById('modalName').textContent = student.name;
             document.getElementById('modalNIS').textContent = 'NIS: ' + student.NIS;
             
-            // Data Pribadi
-            document.getElementById('modalFullName').textContent = student.name;
-            document.getElementById('modalNISDetail').textContent = student.NIS;
-            document.getElementById('modalPlaceBirth').textContent = student.place_birth || '-';
-            document.getElementById('modalDateBirth').textContent = formatDate(student.date_birth);
-            document.getElementById('modalGender').textContent = student.gender === 'L' ? 'Laki-laki' : 'Perempuan';
-            document.getElementById('modalSchool').textContent = student.school || '-';
+            // Data Pribadi - Display mode with data attributes for edit
+            document.getElementById('modalFullName').innerHTML = `<p class="font-semibold text-gray-900">${student.name}</p>`;
+            document.getElementById('modalNISDetail').innerHTML = `<p class="font-semibold text-gray-900">${student.NIS}</p>`;
+            document.getElementById('modalPlaceBirth').innerHTML = `<p class="font-semibold text-gray-900 text-sm">${student.place_birth || '-'}</p>`;
+            document.getElementById('modalDateBirth').innerHTML = `<p class="font-semibold text-gray-900 text-sm" data-raw="${student.date_birth}">${formatDate(student.date_birth)}</p>`;
+            document.getElementById('modalGender').innerHTML = `<p class="font-semibold text-gray-900" data-value="${student.gender}">${student.gender === 'L' ? 'Laki-laki' : 'Perempuan'}</p>`;
+            document.getElementById('modalSchool').innerHTML = `<p class="font-semibold text-gray-900 text-sm">${student.school || '-'}</p>`;
             
             // Kontak
-            document.getElementById('modalPhoneUser').textContent = student.phone_number_user || '-';
-            document.getElementById('modalPhoneParent').textContent = student.phone_number_parent || '-';
-            document.getElementById('modalAddress').textContent = student.address || '-';
+            document.getElementById('modalPhoneUser').innerHTML = `<p class="font-semibold text-gray-900">${student.phone_number_user || '-'}</p>`;
+            document.getElementById('modalPhoneParent').innerHTML = `<p class="font-semibold text-gray-900">${student.phone_number_parent || '-'}</p>`;
+            document.getElementById('modalAddress').innerHTML = `<p class="font-semibold text-gray-900">${student.address || '-'}</p>`;
             
             // Pendidikan
+            document.getElementById('modalClass').setAttribute('data-class-id', student.class_id || 'null');
             document.getElementById('modalClass').textContent = student.class_name || 'Belum ada kelas';
+            
+            document.getElementById('modalJenjang').setAttribute('data-level-id', student.education_levels_id || '');
             document.getElementById('modalJenjang').textContent = student.jenjang || '-';
+            
+            document.getElementById('modalTingkat').setAttribute('data-grade-id', student.school_grades_id || '');
             document.getElementById('modalTingkat').textContent = student.tingkat ? 'Kelas ' + student.tingkat : '-';
+            
+            // Reset edit button
+            const button = document.getElementById('editButton');
+            const buttonText = document.getElementById('editButtonText');
+            buttonText.textContent = 'Edit';
+            button.classList.remove('from-green-500', 'to-green-600', 'hover:from-green-600', 'hover:to-green-700');
+            button.classList.add('from-amber-500', 'to-orange-500', 'hover:from-amber-600', 'hover:to-orange-600');
             
             // Show modal with animation
             modal.classList.remove('hidden');
@@ -528,11 +591,154 @@
             }, 10);
         }
 
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const button = document.getElementById('editButton');
+            const buttonText = document.getElementById('editButtonText');
+
+            if (isEditMode) {
+                // Switch to edit mode - convert to inputs
+                buttonText.textContent = 'Simpan';
+                button.classList.remove('from-amber-500', 'to-orange-500', 'hover:from-amber-600', 'hover:to-orange-600');
+                button.classList.add('from-green-500', 'to-green-600', 'hover:from-green-600', 'hover:to-green-700');
+                
+                // Get current values
+                const currentData = {
+                    name: document.getElementById('modalFullName').querySelector('p').textContent,
+                    NIS: document.getElementById('modalNISDetail').querySelector('p').textContent,
+                    place_birth: document.getElementById('modalPlaceBirth').querySelector('p').textContent,
+                    date_birth: document.getElementById('modalDateBirth').querySelector('p').getAttribute('data-raw'),
+                    gender: document.getElementById('modalGender').querySelector('p').getAttribute('data-value'),
+                    school: document.getElementById('modalSchool').querySelector('p').textContent,
+                    phone_number_user: document.getElementById('modalPhoneUser').querySelector('p').textContent,
+                    phone_number_parent: document.getElementById('modalPhoneParent').querySelector('p').textContent,
+                    address: document.getElementById('modalAddress').querySelector('p').textContent,
+                    class_id: document.getElementById('modalClass').getAttribute('data-class-id'),
+                    education_levels_id: document.getElementById('modalJenjang').getAttribute('data-level-id'),
+                    school_grades_id: document.getElementById('modalTingkat').getAttribute('data-grade-id')
+                };
+
+                // Convert to inputs
+                document.getElementById('modalFullName').innerHTML = `
+                    <input type="text" name="name" value="${currentData.name}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 text-sm font-semibold">
+                `;
+                
+                document.getElementById('modalNISDetail').innerHTML = `
+                    <input type="text" name="NIS" value="${currentData.NIS}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 text-sm font-semibold">
+                `;
+                
+                document.getElementById('modalPlaceBirth').innerHTML = `
+                    <input type="text" name="place_birth" value="${currentData.place_birth}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 text-sm font-semibold">
+                `;
+                
+                document.getElementById('modalDateBirth').innerHTML = `
+                    <input type="date" name="date_birth" value="${currentData.date_birth}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 text-sm font-semibold">
+                `;
+                
+                document.getElementById('modalGender').innerHTML = `
+                    <select name="gender" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 text-sm font-semibold">
+                        <option value="L" ${currentData.gender === 'L' ? 'selected' : ''}>Laki-laki</option>
+                        <option value="P" ${currentData.gender === 'P' ? 'selected' : ''}>Perempuan</option>
+                    </select>
+                `;
+                
+                document.getElementById('modalSchool').innerHTML = `
+                    <input type="text" name="school" value="${currentData.school}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 text-sm font-semibold">
+                `;
+                
+                document.getElementById('modalPhoneUser').innerHTML = `
+                    <input type="number" name="phone_number_user" value="${currentData.phone_number_user}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 text-sm font-semibold">
+                `;
+                
+                document.getElementById('modalPhoneParent').innerHTML = `
+                    <input type="number" name="phone_number_parent" value="${currentData.phone_number_parent}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 text-sm font-semibold">
+                `;
+                
+                document.getElementById('modalAddress').innerHTML = `
+                    <textarea name="address" rows="2" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 text-sm font-semibold">${currentData.address}</textarea>
+                `;
+                
+                // Education fields - now editable!
+                // Kelas Bimbel dropdown
+                let classOptions = '<option value="">Belum ada kelas</option>';
+                classesData.forEach(cls => {
+                    const selected = currentData.class_id == cls.id ? 'selected' : '';
+                    classOptions += `<option value="${cls.id}" ${selected}>${cls.clases}</option>`;
+                });
+                document.getElementById('modalClass').innerHTML = `
+                    <select name="class_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 text-sm font-bold">
+                        ${classOptions}
+                    </select>
+                `;
+                
+                // Jenjang dropdown
+                let levelOptions = '';
+                educationLevelsData.forEach(level => {
+                    const selected = currentData.education_levels_id == level.id ? 'selected' : '';
+                    levelOptions += `<option value="${level.id}" ${selected}>${level.level}</option>`;
+                });
+                document.getElementById('modalJenjang').innerHTML = `
+                    <select name="education_levels_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 text-sm font-semibold">
+                        ${levelOptions}
+                    </select>
+                `;
+                
+                // Tingkat dropdown
+                let gradeOptions = '';
+                schoolGradesData.forEach(grade => {
+                    const selected = currentData.school_grades_id == grade.id ? 'selected' : '';
+                    gradeOptions += `<option value="${grade.id}" ${selected}>Kelas ${grade.grade}</option>`;
+                });
+                document.getElementById('modalTingkat').innerHTML = `
+                    <select name="school_grades_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 text-sm font-semibold">
+                        ${gradeOptions}
+                    </select>
+                `;
+                
+            } else {
+                // Save changes - collect form data
+                const editForm = document.getElementById('editForm');
+                
+                // Clear previous hidden inputs
+                editForm.querySelectorAll('input[type="hidden"]').forEach(input => input.remove());
+                
+                // Add all input values to form
+                const inputs = document.querySelectorAll('#studentModal input, #studentModal select, #studentModal textarea');
+                inputs.forEach(input => {
+                    if (input.name) {
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = input.name;
+                        hiddenInput.value = input.value;
+                        editForm.appendChild(hiddenInput);
+                    }
+                });
+                
+                // Submit form
+                editForm.submit();
+            }
+        }
+
+        function confirmDelete() {
+            if (confirm('Apakah Anda yakin ingin menghapus data siswa ini? Tindakan ini tidak dapat dibatalkan!')) {
+                document.getElementById('deleteForm').submit();
+            }
+        }
+
         function closeModal() {
             const modal = document.getElementById('studentModal');
             modal.querySelector('div').classList.remove('scale-100');
             setTimeout(() => {
                 modal.classList.add('hidden');
+                isEditMode = false;
             }, 200);
         }
 

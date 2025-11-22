@@ -114,20 +114,21 @@ class StudentController extends Controller
         
         // Ambil semua kelas yang unik (distinct)
         // PENTING: Field adalah 'clases' bukan 'class'
+        // Tambahkan 'id' untuk keperluan edit
         $classes = DB::table('class')
-            ->select('clases')
+            ->select('id', 'clases')
             ->distinct()
             ->orderBy('clases')
             ->get();
 
-        // Ambil semua jenjang pendidikan
+        // Ambil semua jenjang pendidikan dengan ID
         $educationLevels = DB::table('education_levels')
-            ->select('level')
+            ->select('id', 'level')
             ->get();
 
-        // Ambil semua tingkat kelas
+        // Ambil semua tingkat kelas dengan ID
         $schoolGrades = DB::table('school_grades')
-            ->select('grade')
+            ->select('id', 'grade')
             ->orderBy('grade')
             ->get();
 
@@ -140,5 +141,53 @@ class StudentController extends Controller
             'educationLevels',    // Data jenjang untuk dropdown
             'schoolGrades'        // Data tingkat untuk dropdown
         ));
+    }
+
+    /**
+     * Update data siswa
+     * 
+     * PENJELASAN:
+     * Method ini akan menerima data dari form edit dan mengupdate data siswa di database
+     */
+    public function update(Request $request, $id)
+    {
+        // Validasi input dari form
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'NIS' => 'required|string|unique:users,NIS,' . $id,
+            'place_birth' => 'required|string|max:255',
+            'date_birth' => 'required|date',
+            'gender' => 'required|in:L,P',
+            'school' => 'required|string|max:255',
+            'address' => 'required|string',
+            'phone_number_user' => 'required|numeric',
+            'phone_number_parent' => 'required|numeric',
+            'class_id' => 'nullable|exists:class,id',
+            'education_levels_id' => 'required|exists:education_levels,id',
+            'school_grades_id' => 'required|exists:school_grades,id',
+        ]);
+
+        // Update data di database
+        DB::table('users')
+            ->where('id', $id)
+            ->update($validated);
+
+        // Redirect kembali dengan pesan sukses
+        return redirect()->route('data-siswa')->with('success', 'Data siswa berhasil diupdate!');
+    }
+
+    /**
+     * Hapus data siswa
+     * 
+     * PENJELASAN:
+     * Method ini akan menghapus data siswa dari database berdasarkan ID
+     */
+    public function destroy($id)
+    {
+        // Hapus data siswa dari database
+        DB::table('users')->where('id', $id)->delete();
+
+        // Redirect kembali dengan pesan sukses
+        return redirect()->route('data-siswa')->with('success', 'Data siswa berhasil dihapus!');
     }
 }

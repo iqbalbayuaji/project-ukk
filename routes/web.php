@@ -17,3 +17,5 @@ Route::get('/dashboard', function () {
 
 // Route untuk Data Siswa - menggunakan Controller
 Route::get('/data-siswa', [StudentController::class, 'index'])->name('data-siswa');
+Route::put('/data-siswa/{id}', [StudentController::class, 'update'])->name('data-siswa.update');
+Route::delete('/data-siswa/{id}', [StudentController::class, 'destroy'])->name('data-siswa.destroy');
