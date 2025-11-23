@@ -19,4 +19,5 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 // Route untuk Data Siswa - menggunakan Controller
 Route::get('/data-siswa', [StudentController::class, 'index'])->name('data-siswa');
 Route::put('/data-siswa/{id}', [StudentController::class, 'update'])->name('data-siswa.update');
-Route::delete('/data-siswa/{id}', [StudentController::class, 'destroy'])->name('data-siswa.destroy');
+// Route untuk Dashboard Siswa
+Route::get('/dashboard-siswa', [App\Http\Controllers\StudentDashboardController::class, 'index'])->name('dashboard-siswa');
