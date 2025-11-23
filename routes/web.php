@@ -10,7 +10,7 @@ Route::get('/', function () {
 
 Route::get('/login', function () {
     return view('login');
-});
+})->name('login');
 
 // Route untuk Dashboard - menggunakan Controller untuk ambil data dari database
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

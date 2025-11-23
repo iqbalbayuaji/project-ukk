@@ -56,22 +56,31 @@ class PendaftaranController extends Controller
             'phone_number_user' => 'required|numeric',
             'phone_number_parent' => 'required|numeric',
             
-            // Paket & Mapel
-            'competency_id' => 'required|exists:competency,id',
-            'electives' => 'array', // Array ID mapel pilihan
+            // Paket & Mapel (Paket Kompetensi Opsional)
+            'competency_id' => 'nullable|exists:competency,id',
+            'electives' => 'required_with:competency_id|array', // Wajib jika ada paket
             'electives.*' => 'exists:lessons,id',
         ]);
 
         // 2. Cek Validasi Kuota Mapel (Server Side Validation)
-        // Ambil paket yang dipilih untuk tahu kuotanya
-        $selectedPackage = DB::table('competency')->where('id', $request->competency_id)->first();
-        
-        // Asumsi nama paket formatnya "Paket X" dimana X adalah jumlah kuota
-        // Kita ambil angka dari string "Paket 3" -> 3
-        $quota = (int) filter_var($selectedPackage->competencies_package, FILTER_SANITIZE_NUMBER_INT);
-        
-        if (count($request->electives ?? []) > $quota) {
-            return back()->withErrors(['electives' => "Anda memilih terlalu banyak mapel. Paket ini hanya mengizinkan $quota mapel."])->withInput();
+        // Hanya jika user memilih paket kompetensi
+        if ($request->filled('competency_id')) {
+            // Ambil paket yang dipilih untuk tahu kuotanya
+            $selectedPackage = DB::table('competency')->where('id', $request->competency_id)->first();
+            
+            // Asumsi nama paket formatnya "Paket X" dimana X adalah jumlah kuota
+            // Kita ambil angka dari string "Paket 3" -> 3
+            $quota = (int) filter_var($selectedPackage->competencies_package, FILTER_SANITIZE_NUMBER_INT);
+            
+            // Validasi: Jumlah mapel HARUS SAMA dengan kuota
+            if (count($request->electives ?? []) !== $quota) {
+                return back()->withErrors(['electives' => "Untuk paket ini, Anda harus memilih tepat $quota mapel."])->withInput();
+            }
+        } else {
+            // Jika tidak pilih paket, pastikan tidak ada mapel yang dipilih (opsional, untuk keamanan)
+            if ($request->has('electives') && count($request->electives) > 0) {
+                return back()->withErrors(['competency_id' => "Anda harus memilih Paket Kompetensi terlebih dahulu sebelum memilih mapel."])->withInput();
+            }
         }
 
         // 3. Simpan Data Siswa

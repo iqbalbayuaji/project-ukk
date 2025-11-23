@@ -30,6 +30,8 @@ class StudentController extends Controller
             ->leftJoin('education_levels', 'users.education_levels_id', '=', 'education_levels.id')
             // LEFT JOIN dengan school_grades untuk mendapatkan tingkat kelas
             ->leftJoin('school_grades', 'users.school_grades_id', '=', 'school_grades.id')
+            // LEFT JOIN dengan competency untuk mendapatkan paket kompetensi
+            ->leftJoin('competency', 'users.competency_id', '=', 'competency.id')
             ->select(
                 'users.id',                             // ID siswa
                 'users.name',                           // Nama siswa
@@ -44,9 +46,16 @@ class StudentController extends Controller
                 'users.class_id',                       // ID kelas (foreign key)
                 'users.education_levels_id',            // ID jenjang pendidikan
                 'users.school_grades_id',               // ID tingkat kelas
+                'users.competency_id',                  // ID paket kompetensi
                 'class.clases as class_name',           // Nama kelas bimbel
                 'education_levels.level as jenjang',    // Nama jenjang (SD/SMP/SMA)
-                'school_grades.grade as tingkat'        // Tingkat kelas (10/11/12)
+                'school_grades.grade as tingkat',       // Tingkat kelas (10/11/12)
+                'competency.competencies_package as paket', // Nama paket kompetensi
+                // Subquery untuk mengambil mapel pilihan (comma separated)
+                DB::raw('(SELECT GROUP_CONCAT(lessons.name SEPARATOR ", ") 
+                          FROM student_electives 
+                          JOIN lessons ON student_electives.lesson_id = lessons.id 
+                          WHERE student_electives.user_id = users.id) as mapel_pilihan')
             );
 
         // STEP 2: FILTER BERDASARKAN PENCARIAN (SEARCH)

@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
             ClassSeeder::class,      // Independent now (removed schedules_id)
             ScheduleSeeder::class,  // depends on room, lessons, AND class
             UserSeeder::class,       // depends on education_levels, school_grades, class, competency
+            StudentElectivesSeeder::class, // depends on users and lessons
         ]);
     }
 }

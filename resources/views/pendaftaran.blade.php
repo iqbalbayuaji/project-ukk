@@ -13,16 +13,16 @@
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
 
-    <div class="max-w-4xl w-full space-y-8 bg-white p-10 rounded-3xl shadow-xl border border-gray-100">
+    <div class="relative max-w-4xl w-full space-y-8 bg-white p-10 rounded-3xl shadow-xl border border-gray-100">
+        {{-- Tombol Kembali --}}
+        <a href="{{ route('login') }}" class="absolute top-6 left-6 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900 transition shadow-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+        </a>
         
         <div class="text-center">
-            <div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl mx-auto flex items-center justify-center text-white font-bold text-3xl mb-4 shadow-lg">
-                B
-            </div>
             <h2 class="text-3xl font-extrabold text-gray-900">Pendaftaran Siswa Baru</h2>
-            <p class="mt-2 text-sm text-gray-600">
-                Lengkapi data diri Anda untuk bergabung dengan BBT Academia
-            </p>
         </div>
 
         @if ($errors->any())
@@ -91,11 +91,11 @@
                 </div>
             </div>
 
-            <!-- Bagian 2: Sekolah & Kontak -->
+            <!-- Bagian 2: Informasi & Kontak -->
             <div>
                 <h3 class="text-lg font-bold text-gray-900 border-b pb-2 mb-4 flex items-center gap-2">
                     <span class="w-6 h-6 bg-cyan-100 text-cyan-600 rounded-full flex items-center justify-center text-xs">2</span>
-                    Sekolah & Kontak
+                    Informasi & Kontak
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="col-span-2">
@@ -143,11 +143,16 @@
                 </h3>
                 
                 <div class="mb-6">
-                    <label for="competency_id" class="block text-sm font-medium text-gray-700 mb-2">Pilih Paket Kompetensi</label>
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="competency_id" class="block text-sm font-medium text-gray-700">Pilih Paket Kompetensi (Opsional)</label>
+                        <button type="button" onclick="clearPackageSelection()" class="text-xs text-red-500 hover:text-red-700 font-medium underline">
+                            Reset Pilihan Paket
+                        </button>
+                    </div>
                     <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-4">
                         @foreach($competencyPackages as $package)
                             <label class="cursor-pointer relative">
-                                <input type="radio" name="competency_id" value="{{ $package->id }}" class="peer sr-only" required {{ old('competency_id') == $package->id ? 'checked' : '' }} onchange="updateMapelLimit(this)">
+                                <input type="radio" name="competency_id" value="{{ $package->id }}" class="peer sr-only" {{ old('competency_id') == $package->id ? 'checked' : '' }} onchange="updateMapelLimit(this)">
                                 <div class="p-4 rounded-xl border-2 border-gray-200 hover:border-cyan-300 peer-checked:border-cyan-600 peer-checked:bg-cyan-50 transition text-center">
                                     <div class="font-bold text-gray-900">{{ $package->competencies_package }}</div>
                                     <div class="text-xs text-gray-500 mt-1">Pilih {{ filter_var($package->competencies_package, FILTER_SANITIZE_NUMBER_INT) }} Mapel</div>
@@ -177,7 +182,7 @@
 
             <div class="pt-6">
                 <button type="submit" class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 transition transform hover:-translate-y-0.5">
-                    Daftar Sekarang
+                    Daftar
                 </button>
             </div>
         </form>
@@ -188,6 +193,27 @@
         const mapelContainer = document.getElementById('mapel-container');
         const selectionCounter = document.getElementById('selection-counter');
         const checkboxes = document.querySelectorAll('.mapel-checkbox');
+
+        function clearPackageSelection() {
+            // Uncheck all radios
+            const radios = document.querySelectorAll('input[name="competency_id"]');
+            radios.forEach(r => r.checked = false);
+            
+            // Reset state
+            maxSelection = 0;
+            
+            // Disable mapel container
+            mapelContainer.classList.add('opacity-50', 'pointer-events-none');
+            
+            // Uncheck all mapels
+            checkboxes.forEach(cb => {
+                cb.checked = false;
+                cb.disabled = false;
+                cb.parentElement.classList.remove('opacity-50', 'cursor-not-allowed');
+            });
+            
+            updateCounter();
+        }
 
         function updateMapelLimit(radio) {
             // Ambil angka dari teks paket (misal "Paket 3" -> 3)
@@ -234,12 +260,19 @@
 
         function updateCounter() {
             const checkedCount = document.querySelectorAll('.mapel-checkbox:checked').length;
-            selectionCounter.innerText = `Terpilih: ${checkedCount} / ${maxSelection}`;
             
-            if (checkedCount === maxSelection) {
-                selectionCounter.classList.remove('bg-cyan-100', 'text-cyan-600');
-                selectionCounter.classList.add('bg-green-100', 'text-green-600');
+            if (maxSelection > 0) {
+                selectionCounter.innerText = `Terpilih: ${checkedCount} / ${maxSelection}`;
+                
+                if (checkedCount === maxSelection) {
+                    selectionCounter.classList.remove('bg-cyan-100', 'text-cyan-600');
+                    selectionCounter.classList.add('bg-green-100', 'text-green-600');
+                } else {
+                    selectionCounter.classList.add('bg-cyan-100', 'text-cyan-600');
+                    selectionCounter.classList.remove('bg-green-100', 'text-green-600');
+                }
             } else {
+                selectionCounter.innerText = "Pilih Paket Terlebih Dahulu";
                 selectionCounter.classList.add('bg-cyan-100', 'text-cyan-600');
                 selectionCounter.classList.remove('bg-green-100', 'text-green-600');
             }

@@ -379,9 +379,9 @@
 
     {{-- MODAL DETAIL SISWA --}}
     <div id="studentModal" class="fixed inset-0 bg-gray-900/30 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl transform transition-all">
+        <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl transform transition-all max-h-[90vh] flex flex-col">
             {{-- Modal Header --}}
-            <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-6 py-4 rounded-t-2xl flex items-center justify-between z-10">
+            <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-6 py-4 rounded-t-2xl flex items-center justify-between z-10 flex-shrink-0">
                 <div class="flex items-center gap-3">
                     <div id="modalAvatar" class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-white font-bold text-lg">
                         
@@ -399,7 +399,7 @@
             </div>
 
             {{-- Modal Body --}}
-            <div class="p-6">
+            <div class="p-6 overflow-y-auto">
                 {{-- Data Pribadi & Kontak dalam 1 baris --}}
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                     {{-- Data Pribadi --}}
@@ -487,6 +487,26 @@
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <p class="text-xs text-gray-500 mb-1">Tingkat</p>
                             <p id="modalTingkat" class="font-semibold text-gray-900"></p>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Paket & Mapel --}}
+                <div class="mt-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                        </svg>
+                        Paket & Mapel
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-cyan-50 p-4 rounded-lg border border-cyan-100">
+                            <p class="text-xs text-cyan-700 mb-1">Paket Kompetensi</p>
+                            <p id="modalPaket" class="font-bold text-cyan-900"></p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-1">Mapel Pilihan</p>
+                            <p id="modalMapel" class="font-semibold text-gray-900 text-sm"></p>
                         </div>
                     </div>
                 </div>
@@ -600,6 +620,10 @@
             
             document.getElementById('modalTingkat').setAttribute('data-grade-id', student.school_grades_id || '');
             document.getElementById('modalTingkat').textContent = student.tingkat ? 'Kelas ' + student.tingkat : '-';
+
+            // Paket & Mapel
+            document.getElementById('modalPaket').textContent = student.paket || '-';
+            document.getElementById('modalMapel').textContent = student.mapel_pilihan || '-';
             
             // Reset edit button
             const button = document.getElementById('editButton');
