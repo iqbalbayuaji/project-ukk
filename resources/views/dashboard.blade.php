@@ -97,14 +97,6 @@
                         <span class="ml-3">Pelajaran</span>
                     </a>
                 </li>
-                <li>
-                    <a href="#" class="flex items-center p-3 text-white hover:bg-white/10 rounded-lg group transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                        <span class="ml-3">Laporan</span>
-                    </a>
-                </li>
             </ul>
 
             <!-- Logout Button -->
@@ -153,7 +145,10 @@
                     <span class="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full flex-shrink-0">+12%</span>
                 </div>
                 <h3 class="text-gray-600 text-xs sm:text-sm font-medium mb-1 truncate">Total Siswa</h3>
-                <p class="text-2xl sm:text-3xl font-bold text-gray-900">156</p>
+                {{-- TUTORIAL: Menampilkan Data dari Controller --}}
+                {{-- Variabel $totalSiswa dikirim dari DashboardController --}}
+                {{-- Gunakan {{ }} untuk menampilkan variabel di Blade --}}
+                <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $totalSiswa }}</p>
                 <p class="text-xs text-gray-500 mt-1 sm:mt-2 truncate">Siswa aktif terdaftar</p>
             </div>
 
@@ -168,7 +163,8 @@
                     <span class="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-1 rounded-full flex-shrink-0">8 Ruang</span>
                 </div>
                 <h3 class="text-gray-600 text-xs sm:text-sm font-medium mb-1 truncate">Total Kelas</h3>
-                <p class="text-2xl sm:text-3xl font-bold text-gray-900">12</p>
+                {{-- Data dari database --}}
+                <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $totalKelas }}</p>
                 <p class="text-xs text-gray-500 mt-1 sm:mt-2 truncate">Kelas bimbel tersedia</p>
             </div>
 
@@ -336,45 +332,63 @@
             <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg font-bold text-gray-900">Siswa Terbaru</h2>
-                    <a href="#" class="text-sm text-cyan-600 hover:text-cyan-700 font-semibold">Lihat Semua →</a>
+                    <a href="/data-siswa" class="text-sm text-cyan-600 hover:text-cyan-700 font-semibold">Lihat Semua →</a>
                 </div>
                 <div class="space-y-4">
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
-                        <div class="flex items-center space-x-4">
-                            <div class="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
-                                AR
+                    {{-- TUTORIAL: Menampilkan Data dengan Loop --}}
+                    {{-- @foreach digunakan untuk mengulang data array/collection --}}
+                    {{-- $siswasTerbaru adalah variabel dari DashboardController --}}
+                    
+                    @forelse($siswaTerbaru as $siswa)
+                        {{-- Loop ini akan dijalankan untuk setiap siswa --}}
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+                            <div class="flex items-center space-x-4">
+                                {{-- Membuat inisial dari nama siswa --}}
+                                @php
+                                    // Ambil huruf pertama dari setiap kata
+                                    $namaParts = explode(' ', $siswa->name);
+                                    $initials = '';
+                                    foreach($namaParts as $part) {
+                                        $initials .= strtoupper(substr($part, 0, 1));
+                                        if(strlen($initials) >= 2) break; // Maksimal 2 huruf
+                                    }
+                                    
+                                    // Warna random untuk avatar
+                                    $colors = [
+                                        'from-cyan-400 to-blue-500',
+                                        'from-purple-400 to-pink-500',
+                                        'from-orange-400 to-red-500',
+                                        'from-green-400 to-teal-500',
+                                        'from-indigo-400 to-purple-500'
+                                    ];
+                                    $randomColor = $colors[$siswa->id % count($colors)];
+                                @endphp
+                                
+                                <div class="w-10 h-10 bg-gradient-to-br {{ $randomColor }} rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
+                                    {{ $initials }}
+                                </div>
+                                <div>
+                                    {{-- Menampilkan nama siswa --}}
+                                    <p class="font-semibold text-gray-900">{{ $siswa->name }}</p>
+                                    
+                                    {{-- Menampilkan jenjang dan kelas --}}
+                                    {{-- Gunakan ?? untuk nilai default jika null --}}
+                                    <p class="text-sm text-gray-500">
+                                        {{ $siswa->jenjang ?? 'N/A' }} • 
+                                        {{-- Perbaikan: Jika ada class_name, tampilkan itu saja. Jika tidak, tampilkan tingkat --}}
+                                        Kelas {{ $siswa->class_name ?? ($siswa->tingkat ?? '-') }}
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <p class="font-semibold text-gray-900">Ahmad Rizki</p>
-                                <p class="text-sm text-gray-500">SMA • Kelas 10A</p>
-                            </div>
+                            <span class="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold whitespace-nowrap">Aktif</span>
                         </div>
-                        <span class="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold whitespace-nowrap">Aktif</span>
-                    </div>
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
-                        <div class="flex items-center space-x-4">
-                            <div class="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
-                                SN
-                            </div>
-                            <div>
-                                <p class="font-semibold text-gray-900">Siti Nurhaliza</p>
-                                <p class="text-sm text-gray-500">SMA • Kelas 11B</p>
-                            </div>
+                    @empty
+                        {{-- @empty akan ditampilkan jika $siswasTerbaru kosong --}}
+                        <div class="text-center py-8">
+                            <p class="text-gray-500">Belum ada data siswa</p>
                         </div>
-                        <span class="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold whitespace-nowrap">Aktif</span>
-                    </div>
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
-                        <div class="flex items-center space-x-4">
-                            <div class="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
-                                BS
-                            </div>
-                            <div>
-                                <p class="font-semibold text-gray-900">Budi Santoso</p>
-                                <p class="text-sm text-gray-500">SMA • Kelas 12A</p>
-                            </div>
-                        </div>
-                        <span class="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold whitespace-nowrap">Aktif</span>
-                    </div>
+                    @endforelse
+                    {{-- @endforelse menutup loop @forelse --}}
                 </div>
             </div>
         </div>
