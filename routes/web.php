@@ -21,3 +21,8 @@ Route::get('/data-siswa', [StudentController::class, 'index'])->name('data-siswa
 Route::put('/data-siswa/{id}', [StudentController::class, 'update'])->name('data-siswa.update');
 // Route untuk Dashboard Siswa
 Route::get('/dashboard-siswa', [App\Http\Controllers\StudentDashboardController::class, 'index'])->name('dashboard-siswa');
+
+// Route Pendaftaran Siswa
+use App\Http\Controllers\PendaftaranController;
+Route::get('/pendaftaran', [PendaftaranController::class, 'index'])->name('pendaftaran.index');
+Route::post('/pendaftaran', [PendaftaranController::class, 'store'])->name('pendaftaran.store');

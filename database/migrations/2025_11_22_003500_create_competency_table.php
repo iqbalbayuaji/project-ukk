@@ -15,9 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->foreignId('lesson_id')
-                  ->constrained('lessons')
-                  ->onDelete('restrict');
+            // lesson_id dihapus. Paket kompetensi hanya menentukan kuota mapel pilihan.
             $table->string('competencies_package');
             
         });

@@ -18,6 +18,7 @@ class ScheduleSeeder extends Seeder
                 'start_time' => '08:00:00',
                 'end_time' => '10:00:00',
                 'room_id' => 1,
+                'class_id' => 1, // Kelas 10A
                 'day_of_week' => 'Senin',
                 'created_at' => now(),
                 'updated_at' => now()
@@ -27,6 +28,7 @@ class ScheduleSeeder extends Seeder
                 'start_time' => '10:30:00',
                 'end_time' => '12:30:00',
                 'room_id' => 2,
+                'class_id' => 1, // Kelas 10A
                 'day_of_week' => 'Selasa',
                 'created_at' => now(),
                 'updated_at' => now()
@@ -36,6 +38,7 @@ class ScheduleSeeder extends Seeder
                 'start_time' => '13:00:00',
                 'end_time' => '15:00:00',
                 'room_id' => 3,
+                'class_id' => 2, // Kelas 11B
                 'day_of_week' => 'Rabu',
                 'created_at' => now(),
                 'updated_at' => now()
@@ -45,6 +48,7 @@ class ScheduleSeeder extends Seeder
                 'start_time' => '15:30:00',
                 'end_time' => '17:30:00',
                 'room_id' => 4,
+                'class_id' => 2, // Kelas 11B
                 'day_of_week' => 'Kamis',
                 'created_at' => now(),
                 'updated_at' => now()
@@ -54,6 +58,7 @@ class ScheduleSeeder extends Seeder
                 'start_time' => '08:00:00',
                 'end_time' => '10:00:00',
                 'room_id' => 5,
+                'class_id' => 3, // Kelas 12A
                 'day_of_week' => 'Jumat',
                 'created_at' => now(),
                 'updated_at' => now()
@@ -63,6 +68,7 @@ class ScheduleSeeder extends Seeder
                 'start_time' => '10:30:00',
                 'end_time' => '12:30:00',
                 'room_id' => 1,
+                'class_id' => 3, // Kelas 12A
                 'day_of_week' => 'Rabu',
                 'created_at' => now(),
                 'updated_at' => now()
@@ -72,6 +78,7 @@ class ScheduleSeeder extends Seeder
                 'start_time' => '13:00:00',
                 'end_time' => '15:00:00',
                 'room_id' => 2,
+                'class_id' => 3, // Kelas 12A
                 'day_of_week' => 'Jumat',
                 'created_at' => now(),
                 'updated_at' => now()

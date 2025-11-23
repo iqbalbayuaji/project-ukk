@@ -24,6 +24,12 @@ return new class extends Migration
                   ->nullable()
                   ->constrained('room')
                   ->nullOnDelete();
+            
+            // Tambahan: Relasi ke tabel class
+            $table->foreignId('class_id')
+                  ->nullable()
+                  ->constrained('class')
+                  ->onDelete('cascade');
             $table->enum('day_of_week', ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']);
         });
     }

@@ -14,32 +14,27 @@ class CompetencySeeder extends Seeder
     {
         $competencies = [
             [
-                'lesson_id' => 1, // Matematika
-                'competencies_package' => 'Paket Matematika Dasar',
+                'competencies_package' => 'Paket 1', // Kuota 1 Mapel
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
-                'lesson_id' => 2, // Bahasa Indonesia
-                'competencies_package' => 'Paket Bahasa Indonesia Lengkap',
+                'competencies_package' => 'Paket 2', // Kuota 2 Mapel
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
-                'lesson_id' => 3, // Bahasa Inggris
-                'competencies_package' => 'Paket Bahasa Inggris Conversation',
+                'competencies_package' => 'Paket 3', // Kuota 3 Mapel
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
-                'lesson_id' => 7, // IPA
-                'competencies_package' => 'Paket IPA Terpadu',
+                'competencies_package' => 'Paket 4', // Kuota 4 Mapel
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
-                'lesson_id' => 8, // IPS
-                'competencies_package' => 'Paket IPS Komprehensif',
+                'competencies_package' => 'Paket 5', // Kuota 5 Mapel
                 'created_at' => now(),
                 'updated_at' => now()
             ],

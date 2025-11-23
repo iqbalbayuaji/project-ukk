@@ -29,8 +29,8 @@ class DatabaseSeeder extends Seeder
 
         // 2. Tables with dependencies
         $this->call([
-            ScheduleSeeder::class,  // depends on room and lessons
-            ClassSeeder::class,      // depends on schedules
+            ClassSeeder::class,      // Independent now (removed schedules_id)
+            ScheduleSeeder::class,  // depends on room, lessons, AND class
             UserSeeder::class,       // depends on education_levels, school_grades, class, competency
         ]);
     }

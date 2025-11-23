@@ -17,10 +17,7 @@ return new class extends Migration
 
             $table->string('clases');
             $table->string('grade');
-            $table->foreignId('schedules_id')
-                  ->nullable()
-                  ->constrained('schedules')
-                  ->nullOnDelete();
+            // schedules_id dihapus karena relasi terbalik. Schedules yang harus punya class_id.
         });
     }
 
